@@ -68,13 +68,8 @@ int __attribute__((weak)) GRAYSCALE_TYPE = 0x1;
 // com.apple.universalaccess.screenGrayscaleDidChange in the default distributed notificaiton center, which all apps
 // still listen for and so the daemon does post it after toggling grayscale).
 
-// the daemon is not always running or listening for these changes, so we use the following function from
-// /usr/lib/libUniversalAccess.dylib to kick it awake after making the changes. (it seems to check and respond to the
-// preferences when it is first woken up; wake it up after the changes to avoid potential races)
-
-extern void _UniversalAccessDStart(int magic);
-
-int __attribute__((weak)) UNIVERSALACCESSD_MAGIC = 0x8;
+// on macOS 15+, /usr/lib/libUniversalAccess.dylib no longer exists, so _UniversalAccessDStart
+// is unavailable. instead, the app posts the Darwin notification directly to wake up the daemon.
 
 // --
 
