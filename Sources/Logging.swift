@@ -13,10 +13,14 @@ enum LogLevel: Int {
 
 let currentLogLevel: LogLevel = .ALWAYS_PRINT
 
-func grayscaleLog(logLevel: LogLevel = .ALWAYS_PRINT, _ format: String,
-               file: String = #file, caller: String = #function, args: CVarArg...) {
+func grayscaleLog(logLevel: LogLevel = .ALWAYS_PRINT, _ message: String,
+                  file: String = #file, caller: String = #function) {
     if (logLevel.rawValue >= currentLogLevel.rawValue) {
         let fileName = file.components(separatedBy: "/").last ?? ""
-        NSLog("\(fileName):\(caller) " + format, args)
+        // the message must be passed as an argument rather than spliced into the
+        // format string: interpolated values (like application names) may contain
+        // % characters, which NSLog would otherwise misinterpret as format
+        // specifiers and read nonexistent variadic arguments
+        NSLog("%@", "\(fileName):\(caller) \(message)")
     }
 }
