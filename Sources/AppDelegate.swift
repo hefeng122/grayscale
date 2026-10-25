@@ -7,7 +7,6 @@
 //
 
 import Cocoa
-import Carbon
 
 // user defaults keys
 let grayscaleShortcutName = "grayscale_shortcut"

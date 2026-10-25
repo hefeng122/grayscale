@@ -19,7 +19,6 @@
 		8BFFB01C247ACB56009AC0A6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8BFFB019247ACB56009AC0A6 /* Assets.xcassets */; };
 		8BFFB020247ACBD8009AC0A6 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 8BFFB01F247ACBD8009AC0A6 /* LICENSE */; };
 		8BFFB025247ADBEA009AC0A6 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BFFB00D247AC9DB009AC0A6 /* AppDelegate.swift */; };
-		8BFFB02C247F4D0C009AC0A6 /* UniversalAccess.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8BFFB02B247F4D0C009AC0A6 /* UniversalAccess.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -76,7 +75,6 @@
 		8BA8EEE125C7B0E1008BA33F /* Logging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logging.swift; sourceTree = "<group>"; };
 		8BB30B462492D06600B9039A /* ShortcutWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShortcutWindowController.swift; sourceTree = "<group>"; };
 		8BB30B472492D06600B9039A /* ShortcutWindow.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ShortcutWindow.xib; sourceTree = "<group>"; };
-		8BB30B4C2493C8F200B9039A /* package.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; name = package.sh; path = ../goftam/package.sh; sourceTree = "<group>"; };
 		8BB30B54249416FD00B9039A /* MediaAccessibility.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaAccessibility.framework; path = /System/Library/Frameworks/MediaAccessibility.framework; sourceTree = "<absolute>"; };
 		8BFFB00D247AC9DB009AC0A6 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		8BFFB019247ACB56009AC0A6 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -85,7 +83,6 @@
 		8BFFB021247ACBDE009AC0A6 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		8BFFB026247ADCC9009AC0A6 /* Bridge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Bridge.h; sourceTree = "<group>"; };
 		8BFFB029247F41E9009AC0A6 /* libUniversalAccess.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libUniversalAccess.tbd; path = usr/lib/libUniversalAccess.tbd; sourceTree = SDKROOT; };
-		8BFFB02B247F4D0C009AC0A6 /* UniversalAccess.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UniversalAccess.framework; path = /System/Library/PrivateFrameworks/UniversalAccess.framework; sourceTree = "<absolute>"; };
 		8BFFB03424820DFB009AC0A6 /* grayscale.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = grayscale.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -97,7 +94,6 @@
 				8B98DE20249743D20004DBCB /* libUniversalAccess.dylib in Frameworks */,
 				8BB30B58249416FD00B9039A /* MediaAccessibility.framework in Frameworks */,
 				8B36434324874E4B00F18433 /* MASShortcut.framework in Frameworks */,
-				8BFFB02C247F4D0C009AC0A6 /* UniversalAccess.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -109,7 +105,6 @@
 			children = (
 				8B36433724874D7400F18433 /* MASShortcut.xcodeproj */,
 				8BFFB01F247ACBD8009AC0A6 /* LICENSE */,
-				8BB30B4C2493C8F200B9039A /* package.sh */,
 				8BFFB021247ACBDE009AC0A6 /* README.md */,
 				8BFFB017247ACB56009AC0A6 /* Resources */,
 				8BFFB00C247AC9DB009AC0A6 /* Sources */,
@@ -165,7 +160,6 @@
 			children = (
 				8B98DE1A249743960004DBCB /* libUniversalAccess.dylib */,
 				8BB30B54249416FD00B9039A /* MediaAccessibility.framework */,
-				8BFFB02B247F4D0C009AC0A6 /* UniversalAccess.framework */,
 				8BFFB029247F41E9009AC0A6 /* libUniversalAccess.tbd */,
 			);
 			name = Frameworks;
