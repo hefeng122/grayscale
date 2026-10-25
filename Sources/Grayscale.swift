@@ -7,6 +7,7 @@
 //
 
 import Darwin
+import Foundation
 
 // see Sources/Bridge.h for information about toggling grayscale
 func grayscaleEnabled() -> Bool {
@@ -28,7 +29,35 @@ func wakeUpUniversalAccessD() {
     )
 }
 
+// macOS 27+ fallback: use Shortcuts app to toggle system-wide grayscale.
+// This is the only known way to affect Dock and menu bar on macOS 27.
+func runShortcutsGrayscale(enable: Bool) -> Bool {
+    let task = Process()
+    task.launchPath = "/usr/bin/shortcuts"
+    // Try to run a shortcut named "Toggle Grayscale" or "Grayscale"
+    task.arguments = ["run", enable ? "Enable Grayscale" : "Disable Grayscale"]
+    
+    let pipe = Pipe()
+    task.standardOutput = pipe
+    task.standardError = pipe
+    
+    do {
+        try task.run()
+        task.waitUntilExit()
+        return task.terminationStatus == 0
+    } catch {
+        return false
+    }
+}
+
 func enableGrayscale() {
+    // On macOS 27+, try Shortcuts first for system-wide coverage
+    if #available(macOS 27.0, *) {
+        if runShortcutsGrayscale(enable: true) {
+            return
+        }
+    }
+    
     MADisplayFilterPrefSetType(SYSTEM_FILTER, GRAYSCALE_TYPE)
     MADisplayFilterPrefSetCategoryEnabled(SYSTEM_FILTER, true)
     wakeUpUniversalAccessD()
@@ -39,6 +68,13 @@ func enableGrayscale() {
 }
 
 func disableGrayscale() {
+    // On macOS 27+, try Shortcuts first for system-wide coverage
+    if #available(macOS 27.0, *) {
+        if runShortcutsGrayscale(enable: false) {
+            return
+        }
+    }
+    
     MADisplayFilterPrefSetCategoryEnabled(SYSTEM_FILTER, false)
     wakeUpUniversalAccessD()
     // Revert the display driver grayscale alongside the filter.
