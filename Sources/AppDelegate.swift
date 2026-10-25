@@ -18,8 +18,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     // application state management
 
-    var currentApplication: NSRunningApplication!
-    var currentApplicationBundleIdentifier: String? { currentApplication.bundleIdentifier }
+    var currentApplication: NSRunningApplication?
+    var currentApplicationBundleIdentifier: String? { currentApplication?.bundleIdentifier }
     var defaultGrayscaleEnabled: Bool = false
     var perAppGrayscaleEnabledDict: [String: Bool] = [:]
 
@@ -27,7 +27,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         grayscaleLog("")
 
         defaultGrayscaleEnabled = grayscaleEnabled()
-        currentApplication = NSWorkspace.shared.frontmostApplication!
+        currentApplication = NSWorkspace.shared.frontmostApplication
         perAppGrayscaleEnabledDict = UserDefaults.standard.dictionary(forKey: perAppGrayscaleEnabledDictName) as? [String: Bool] ?? [:]
 
         createUI()
@@ -56,8 +56,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     @objc func handleApplicationChange(_ aNotification: Notification) {
-        currentApplication = (aNotification.userInfo!["NSWorkspaceApplicationKey"] as! NSRunningApplication)
-        grayscaleLog("\(currentApplication.localizedName!) got focus")
+        guard let application = aNotification.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication else {
+            grayscaleLog("application change notification without application info")
+            return
+        }
+
+        currentApplication = application
+        grayscaleLog("\(application.localizedName ?? "unknown") got focus")
         updateUI()
     }
 
@@ -72,7 +77,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             return
         }
 
-        let senderObject = sender as! NSObject
+        guard let senderObject = sender as? NSObject else {
+            grayscaleLog("unexpected sender")
+            return
+        }
+
         if senderObject == appSpecificSubMenuItemGrayscaleDefault {
             grayscaleLog("default")
             perAppGrayscaleEnabledDict.removeValue(forKey: bundleIdentifier)
@@ -98,7 +107,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     @objc func statusBarButtonClick(_ sender: Any) {
-        let event = NSApp.currentEvent!
+        guard let event = NSApp.currentEvent else {
+            grayscaleLog("status bar button click without event")
+            return
+        }
+
         if event.type == NSEvent.EventType.leftMouseUp {
             toggleDefaultGrayscale()
         } else if event.type == NSEvent.EventType.rightMouseUp {
@@ -114,7 +127,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     func updateUI() {
         defaultGrayscaleMenuItem.title = defaultGrayscaleEnabled ? "Grayscale Default: Enabled" : "Grayscale Default: Disabled"
-        appSpecificMenuItem.title = currentApplication.localizedName!
+        appSpecificMenuItem.title = currentApplication?.localizedName ?? "Unknown Application"
 
         if let bundleIdentifier = currentApplicationBundleIdentifier,
            let appSpecificEnableGrayscale = perAppGrayscaleEnabledDict[bundleIdentifier] {
@@ -166,10 +179,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         appSpecificSubMenuItemGrayscaleDefault = NSMenuItem(title: "Default",  action: #selector(appSpecificMenuClick(_:)), keyEquivalent: "")
         appSpecificSubMenuItemGrayscaleEnabled = NSMenuItem(title: "Enable Grayscale", action: #selector(appSpecificMenuClick(_:)), keyEquivalent: "")
         appSpecificSubMenuItemGrayscaleDisabled = NSMenuItem(title: "Disable Grayscale", action: #selector(appSpecificMenuClick(_:)), keyEquivalent: "")
-        appSpecificMenuItem.submenu = NSMenu()
-        appSpecificMenuItem.submenu!.addItem(appSpecificSubMenuItemGrayscaleDefault)
-        appSpecificMenuItem.submenu!.addItem(appSpecificSubMenuItemGrayscaleEnabled)
-        appSpecificMenuItem.submenu!.addItem(appSpecificSubMenuItemGrayscaleDisabled)
+        let appSpecificSubMenu = NSMenu()
+        appSpecificSubMenu.addItem(appSpecificSubMenuItemGrayscaleDefault)
+        appSpecificSubMenu.addItem(appSpecificSubMenuItemGrayscaleEnabled)
+        appSpecificSubMenu.addItem(appSpecificSubMenuItemGrayscaleDisabled)
+        appSpecificMenuItem.submenu = appSpecificSubMenu
 
         statusMenu.addItem(appSpecificMenuItem)
         statusMenu.addItem(NSMenuItem.separator())
