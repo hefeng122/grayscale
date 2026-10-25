@@ -12,31 +12,14 @@ class ShortcutWindowController: NSWindowController {
 
     @IBOutlet weak var shortcutView: MASShortcutView!
 
-    var shortcut: MASShortcut?
-    var action: () -> Void
-
-    init(_ inputAction: @escaping () -> Void) {
-        action = inputAction
-        super.init(window: nil)
-    }
-
-    required init?(coder: NSCoder) {
-        self.action = {}
-        super.init(coder: coder)
-    }
-
     override func windowDidLoad() {
         super.windowDidLoad()
 
+        // recording a shortcut in the view writes it to this user defaults key;
+        // the MASShortcutBinder set up in AppDelegate observes the key and keeps
+        // the global hotkey registration in sync, so this controller doesn't
+        // need to register shortcuts directly
         self.shortcutView.associatedUserDefaultsKey = grayscaleShortcutName
-        self.shortcutView.shortcutValueChange = { (sender) in
-            guard let shortcutValue = self.shortcutView.shortcutValue else {
-                MASShortcutMonitor.shared().unregisterShortcut(self.shortcut)
-                return
-            }
-            self.shortcut = shortcutValue
-            MASShortcutMonitor.shared().register(self.shortcut, withAction: self.action)
-        }
     }
 
     override func showWindow(_ sender: Any?) {

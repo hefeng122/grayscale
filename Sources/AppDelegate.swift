@@ -157,7 +157,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     var shortcutWindowController: ShortcutWindowController!
 
     func createUI() {
-        shortcutWindowController = ShortcutWindowController(toggleDefaultGrayscale)
+        shortcutWindowController = ShortcutWindowController(window: nil)
 
         statusMenu = NSMenu()
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
