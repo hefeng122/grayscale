@@ -16,11 +16,17 @@ func enableGrayscale() {
     MADisplayFilterPrefSetType(SYSTEM_FILTER, GRAYSCALE_TYPE)
     MADisplayFilterPrefSetCategoryEnabled(SYSTEM_FILTER, true)
     _UniversalAccessDStart(UNIVERSALACCESSD_MAGIC)
+    // Also force the display driver to grayscale; on macOS 15+ this is
+    // required to affect system UI (Dock, menu bar) which the
+    // MediaAccessibility filter no longer covers.
+    CGDisplayForceToGray(true)
 }
 
 func disableGrayscale() {
     MADisplayFilterPrefSetCategoryEnabled(SYSTEM_FILTER, false)
     _UniversalAccessDStart(UNIVERSALACCESSD_MAGIC)
+    // Revert the display driver grayscale alongside the filter.
+    CGDisplayForceToGray(false)
 }
 
 func toggleGrayscale() {
