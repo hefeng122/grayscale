@@ -39,7 +39,7 @@ jobs:
         run: |
           xcodebuild \
             -project grayscale.xcodeproj \
-            -target grayscale \
+            -scheme grayscale \
             -configuration Release \
             -derivedDataPath build \
             CODE_SIGNING_ALLOWED=NO \
