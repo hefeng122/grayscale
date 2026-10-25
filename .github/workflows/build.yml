@@ -1,0 +1,55 @@
+name: build
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+# Cancel superseded runs on the same ref to save CI minutes.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    # macos-latest keeps this workflow alive as GitHub retires pinned images.
+    runs-on: macos-latest
+
+    steps:
+      - name: Check out repository (with MASShortcut submodule)
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Show toolchain versions
+        run: |
+          xcode-select -p
+          xcodebuild -version
+          make --version | head -1
+
+      # Smoke-test the Makefile: parse it and expand every recipe (dry run
+      # executes nothing). Uses -target semantics below because the project
+      # has no committed shared scheme.
+      - name: Verify the Makefile parses
+        run: make -n package
+
+      - name: Build grayscale (Release, unsigned)
+        run: |
+          xcodebuild \
+            -project grayscale.xcodeproj \
+            -target grayscale \
+            -configuration Release \
+            -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" \
+            COMPILER_INDEX_STORE_ENABLE=NO \
+            build
+
+      - name: Upload built app
+        uses: actions/upload-artifact@v4
+        with:
+          name: grayscale.app
+          path: build/Build/Products/Release/grayscale.app
+          if-no-files-found: error
