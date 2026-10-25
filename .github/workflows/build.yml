@@ -43,9 +43,25 @@ jobs:
             -derivedDataPath build \
             CODE_SIGNING_ALLOWED=NO \
             CODE_SIGNING_REQUIRED=NO \
-            CODE_SIGN_IDENTITY="" \
             COMPILER_INDEX_STORE_ENABLE=NO \
-            build
+            build 2>&1 || true
+          # If the app wasn't built, show what went wrong
+          if [ ! -d build/Build/Products/Release/grayscale.app ]; then
+            echo "=== Build failed, trying to diagnose ==="
+            xcodebuild -project grayscale.xcodeproj -list 2>&1 || true
+            echo "=== Trying build with verbose output ==="
+            xcodebuild \
+              -project grayscale.xcodeproj \
+              -target grayscale \
+              -configuration Release \
+              -derivedDataPath build \
+              CODE_SIGNING_ALLOWED=NO \
+              CODE_SIGNING_REQUIRED=NO \
+              COMPILER_INDEX_STORE_ENABLE=NO \
+              build 2>&1 || true
+            echo "=== Exit code: $? ==="
+            exit 1
+          fi
 
       - name: Upload built app
         uses: actions/upload-artifact@v4
