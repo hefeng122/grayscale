@@ -1,6 +1,12 @@
 .PHONY: app package clean
 
-MAKEFILE_DIR:="$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))"
+# Computed with $(abspath $(dir $(lastword $(MAKEFILE_LIST)))) instead of
+# $(shell dirname $(realpath ...)): make word-splits function arguments on
+# spaces, so a repository path containing spaces (a very common macOS
+# location) used to resolve to a corrupted directory. The makefile's own base
+# name has no spaces, so $(dir ...) yields "./" and $(abspath) expands it
+# cleanly, with the space only appearing in the final result.
+MAKEFILE_DIR:="$(abspath $(dir $(lastword $(MAKEFILE_LIST))))"
 
 # puts the app in $(MAKEFILE_DIR)/build/Build/Products/Release/name.app
 app:
@@ -8,13 +14,12 @@ app:
 
 BUILT_APP_PATH:=$(MAKEFILE_DIR)/build/Build/Products/Release/grayscale.app
 
-package:
-	# first argument is the path of the .app file, second argument is installation
-	# directory for the app when the .pkg is run, third argument is the output
-	# location for the .pkg file
-	productbuild --component $(BUILT_APP_PATH) /Applications $(MAKEFILE_DIR)/build/GrayscaleInstaller.pkg \
-	# first argument is directory to zip, second is zipped directory; put the
-	# zipped app file in GitHub releases too, that's what the homebrew casks use
+# builds the app first, then packages it as a .pkg installer and a .zip
+# (the .zip is what the homebrew casks and GitHub releases use)
+package: app
+	# productbuild: --component <app> <install-dir> <output.pkg>
+	productbuild --component $(BUILT_APP_PATH) /Applications $(MAKEFILE_DIR)/build/GrayscaleInstaller.pkg
+	# ditto: zip the app bundle, preserving resource forks and the parent directory
 	ditto -c -k --sequesterRsrc --keepParent $(BUILT_APP_PATH) $(MAKEFILE_DIR)/build/grayscale.app.zip
 
 clean:
